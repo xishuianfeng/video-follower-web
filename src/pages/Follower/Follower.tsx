@@ -12,7 +12,6 @@ const Follower: React.FunctionComponent<IProps> = () => {
   const [params, setSearchParams] = useSearchParams()
   const peerStore = usePeerStore()
   const serachParams = Object.fromEntries(params) as { remotePeerId: string }
-
   const remotePeerId = serachParams.remotePeerId
 
   const videoRef = useRef<
@@ -26,7 +25,6 @@ const Follower: React.FunctionComponent<IProps> = () => {
       const call = peer.call(remotePeerId, createEmptyMediaStream())
 
       if (!remotePeerId) { return }
-      console.log(remotePeerId);
 
       call.once('stream', (stream) => {
         console.log('remoteStream', stream);
@@ -56,32 +54,14 @@ const Follower: React.FunctionComponent<IProps> = () => {
   useEffect(() => {
     receptionSubtitle()
 
-    const onOpen = (id: string) => {
-      peerStore.setLocalPeerId(id)
-      console.log('跟随者准备好了，id“', id)
-      connectPeer(remotePeerId)
-        .then(() => {
-          setSearchParams((prev) => {
-            prev.delete('remotePeerId')
-            return prev
-          })
-          console.log('连接成功');
+    connectPeer(remotePeerId)
+      .then(() => {
+        setSearchParams((prev) => {
+          prev.delete('remotePeerId')
+          return prev
         })
-        .catch(() => { })
-    }
-    peer.on('open', onOpen)
-    // connectPeer(remotePeerId)
-    // .then(() => {
-    //   setSearchParams((prev) => {
-    //     prev.delete('remotePeerId')
-    //     return prev
-    //     })
-    //     console.log('连接成功');
-    //   })
-    // .catch(() => { })
-
-
-
+        console.log('连接成功');
+      })
   }, [])
 
 
