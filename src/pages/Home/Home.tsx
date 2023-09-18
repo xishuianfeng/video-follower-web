@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import Modal from 'react-modal'
 import NavigationBar from '../../components/NavigationBar/NavigationBar'
 import usePeerStore from '../../store/peerStore'
+import logo from '../../assets/logo.png'
 
 interface IProps { }
 
@@ -29,63 +30,25 @@ const Home: React.FunctionComponent<IProps> = () => {
   }, [remotePeerId])
 
   return (
-    <div className='home'>
+    <div className='home-wrapper'>
       <NavigationBar backButtonVisible={false} />
+      <div className='home'>
+        <img className='logo' src={logo} />
 
-      {peerStore.localPeerId === ''
-        ? <div className='connection-status'>
-          未连接,无法共享视频(或加入视频)
-        </div>
-        : <div className='connection-status'>
-          Peer已连接
-        </div>}
+        {peerStore.localPeerId === ''
+          ? <div className='connection-status'>
+            未连接,无法共享视频(或加入视频)
+          </div>
+          : <div className='connection-status'>
+            Peer已连接，快去加入视频吧~
+          </div>}
 
-      <button
-        className='joinButton'
-        onClick={() => { onJoinSessionClick() }}>
-        观看他人视频
-      </button>
-
-      <Modal
-        isOpen={joinSessionModalVisible}
-        shouldCloseOnEsc={true}
-      >
-        <input
-          className='remote-peer-id-input'
-          type='text'
-          value={remotePeerId}
-          onChange={(event) => {
-            const peerId = event.target.value
-            setRemotePeerId(peerId)
-          }}
-        />
-        <div>
-          <button
-            className='modalButton'
-            onClick={() => {
-              const search = new URLSearchParams({
-                remotePeerId
-              }).toString()
-
-              navigator({
-                pathname: '/video/follower',
-                search
-              })
-            }}
-          >
-            加入
-          </button>
-
-          <button
-            className='modalButton'
-            onClick={() => {
-              setJoinSessionModalVisible(false)
-            }}
-          >
-            取消
-          </button>
-        </div>
-      </Modal>
+        <button
+          className='joinButton'
+          onClick={() => { onJoinSessionClick() }}>
+          观看他人视频
+        </button>
+      </div>
 
       <Modal
         isOpen={joinSessionModalVisible}

@@ -1,11 +1,29 @@
-.home {
-  .joinButton {
-    background-color: #fff;
-    margin-left: 10px;
-    padding: 3px;
+.home-wrapper {
+  height: 98vh;
+  background: linear-gradient(180deg, lightblue 0%, #e4f3ff 100%);
+  background-blend-mode: soft-light;
+  background-repeat: no-repeat;
 
-    &:hover {
-      background-color: #aaa;
+  .logo {
+    height: 50vh;
+  }
+
+  .home {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    .joinButton {
+      background-color: #fff;
+      margin-left: 10px;
+      margin-top: 20px;
+      padding: 3px;
+      border-radius: 5px;
+
+      &:hover {
+        background-color: #aaa;
+      }
     }
   }
 }
