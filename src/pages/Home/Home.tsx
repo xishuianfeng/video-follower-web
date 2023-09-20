@@ -37,10 +37,10 @@ const Home: React.FunctionComponent<IProps> = () => {
 
         {peerStore.localPeerId === ''
           ? <div className='connection-status'>
-            未连接,无法共享视频(或加入视频)
+            准备未完成,无法共享视频(或加入视频)
           </div>
           : <div className='connection-status'>
-            Peer已连接，快去加入视频吧~
+            准备完成，快去加入视频吧~
           </div>}
 
         <button
