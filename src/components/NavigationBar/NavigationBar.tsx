@@ -17,7 +17,7 @@ const NavigationBar: React.FunctionComponent<IProps> = (props) => {
     backButtonVisible = true,
     extra,
   } = props
-  const [opacity, setOpacity] = useState(1)
+  const [opacity] = useState(1)
 
   const navigate = useNavigate()
 

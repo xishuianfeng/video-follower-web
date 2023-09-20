@@ -3,12 +3,12 @@ const createEmptyAudioTrack = () => {
   const oscillator = ctx.createOscillator()
   const dst = oscillator.connect(ctx.createMediaStreamDestination())
   oscillator.start()
-  // @ts-expect-error
+  // @ts-expect-error 自带的类型声明不对
   const track = dst.stream.getAudioTracks()[0]
   return Object.assign(track, { enabled: false })
 }
 
-const createEmptyVideoTrack = ({ width, height }) => {
+const createEmptyVideoTrack = ({ width, height }: { width: number, height: number }) => {
   const canvas = Object.assign(document.createElement('canvas'), {
     width,
     height,
