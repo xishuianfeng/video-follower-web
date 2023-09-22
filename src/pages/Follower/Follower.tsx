@@ -18,7 +18,8 @@ const Follower: React.FunctionComponent<IProps> = () => {
     HTMLVideoElement & { captureStream: HTMLCanvasElement['captureStream'] }
   >(null!)
   const peer = peerStore.getPeer()
-  const [subtitle, setSubtitle]: any = useState('')
+  const [subtitle, setSubtitle] = useState('')
+  const [leaveString, setLeaveString] = useState('')
 
   const connectPeer = useMemoizedFn((remotePeerId: string) => {
     return new Promise<void>((resolve, reject) => {
@@ -42,17 +43,36 @@ const Follower: React.FunctionComponent<IProps> = () => {
     })
   })
 
-  const receptionSubtitle = () => {
+  const receptionJSON = () => {
     const connection = peer.connect(remotePeerId)
     peerStore.setDataConnection(connection)
     connection.on('data', (data) => {
-      setSubtitle(data)
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-ignore data类型不能表示
+      const result = JSON.parse(data)
+      if (result.type === 'subtitle') {
+        setSubtitle(result.subtitle)
+      } else if (result.type === 'leavePlayer') {
+        console.log('leave');
+        setLeaveString('对方退出了播放页面，可能正在更换视频哦~')
+
+      } else if (result.type === 'goPlayer') {
+        setLeaveString('')
+        connectPeer(remotePeerId)
+          .then(() => {
+            setSearchParams((prev) => {
+              prev.delete('remotePeerId')
+              return prev
+            })
+            console.log('连接成功');
+          })
+          .catch(() => { })
+      }
     })
   }
 
-
   useEffect(() => {
-    receptionSubtitle()
+    receptionJSON()
 
     connectPeer(remotePeerId)
       .then(() => {
@@ -78,6 +98,12 @@ const Follower: React.FunctionComponent<IProps> = () => {
           dangerouslySetInnerHTML={{ __html: subtitle.replace('<script>', '',) }}
         >
         </div> : ''}
+
+      {leaveString
+        ? <div className='follower-leaveString'>
+          {leaveString}
+        </div>
+        : ''}
     </div>
   )
 }
