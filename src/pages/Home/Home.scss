@@ -25,6 +25,10 @@
         background-color: #aaa;
       }
     }
+
+    .connection-status {
+      font-size: 32px;
+    }
   }
 }
 
@@ -34,14 +38,19 @@
   padding: 10px;
 }
 
-.modalButton {
-  margin-top: 10px;
-  background-color: lightcyan;
-  margin-right: 10px;
-  padding: 5px;
-  border: solid #555 2px;
+.modal-bottom {
+  display: flex;
+  align-items: center;
 
-  &:hover {
-    background-color: #aaa;
+  .modalButton {
+    margin-top: 10px;
+    background-color: lightcyan;
+    margin-right: 10px;
+    padding: 5px;
+    border: solid #555 2px;
+
+    &:hover {
+      background-color: #aaa;
+    }
   }
 }

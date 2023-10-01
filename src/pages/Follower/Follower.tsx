@@ -3,8 +3,9 @@ import './Follower.scss'
 import React, { useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import NavigationBar from '../../components/NavigationBar/NavigationBar'
-import { useMemoizedFn } from 'ahooks'
+import { useFullscreen, useMemoizedFn } from 'ahooks'
 import { createEmptyMediaStream } from '../../utils/peer'
+import { FullScreenOne } from '@icon-park/react'
 
 interface IProps { }
 
@@ -20,6 +21,8 @@ const Follower: React.FunctionComponent<IProps> = () => {
   const peer = peerStore.getPeer()
   const [subtitle, setSubtitle] = useState('')
   const [leaveString, setLeaveString] = useState('')
+  const wrapperRef = useRef<HTMLDivElement>(null)
+  const [isFullscreen, { toggleFullscreen }] = useFullscreen(wrapperRef.current, {})
 
   const connectPeer = useMemoizedFn((remotePeerId: string) => {
     return new Promise<void>((resolve, reject) => {
@@ -87,23 +90,46 @@ const Follower: React.FunctionComponent<IProps> = () => {
 
   return (
     <div className='follower'>
-      <div className='nav-wrapper'>
-        <NavigationBar />
+      <div className='container' ref={wrapperRef}>
+        {isFullscreen
+          ? ''
+          : <div className='nav-wrapper'>
+            <NavigationBar />
+          </div>}
+
+        <video
+          className='follower-video'
+          ref={videoRef}
+          autoPlay
+          onDoubleClick={() => {
+            toggleFullscreen()
+          }}
+        ></video>
+
+        {isFullscreen
+          ? ''
+          : <button
+            className='fullscreen-button'
+            onClick={() => {
+              toggleFullscreen()
+            }}
+          >
+            <FullScreenOne className='icon' theme="two-tone" size="48" fill={['#fff', '#fff']} />
+          </button>}
+
+        {subtitle
+          ? <div
+            className='follower-subtitle'
+            dangerouslySetInnerHTML={{ __html: subtitle.replace('<script>', '',) }}
+          >
+          </div> : ''}
+
+        {leaveString
+          ? <div className='follower-leaveString'>
+            {leaveString}
+          </div>
+          : ''}
       </div>
-      <video className='follower-video' ref={videoRef} autoPlay></video>
-
-      {subtitle
-        ? <div
-          className='follower-subtitle'
-          dangerouslySetInnerHTML={{ __html: subtitle.replace('<script>', '',) }}
-        >
-        </div> : ''}
-
-      {leaveString
-        ? <div className='follower-leaveString'>
-          {leaveString}
-        </div>
-        : ''}
     </div>
   )
 }
