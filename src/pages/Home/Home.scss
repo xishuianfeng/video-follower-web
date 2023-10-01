@@ -18,8 +18,9 @@
       background-color: #fff;
       margin-left: 10px;
       margin-top: 20px;
-      padding: 3px;
+      padding: 10px;
       border-radius: 5px;
+      font-size: 18px;
 
       &:hover {
         background-color: #aaa;
@@ -27,13 +28,29 @@
     }
 
     .connection-status {
-      font-size: 32px;
+      font-size: 18px;
+    }
+
+    .github {
+      display: flex;
+      flex-direction: column;
+      transform: translateX(5%);
+
+      .github-icon {
+        margin-top: 20px;
+        padding-top: 10px;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
     }
   }
 }
 
 .remote-peer-id-input {
-  width: 400px;
+  width: calc(40vw - 20px);
+  min-width: 280px;
   background-color: #eee;
   padding: 10px;
 }

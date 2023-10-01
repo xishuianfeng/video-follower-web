@@ -4,6 +4,8 @@ import Modal from 'react-modal'
 
 Modal.setAppElement('#root')
 Modal.defaultStyles.content = {
+  minWidth: '300px',
+  width: '40vw',
   inset: 'auto',
   top: 0,
   left: 0,

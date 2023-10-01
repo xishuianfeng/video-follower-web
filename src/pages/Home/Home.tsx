@@ -5,6 +5,7 @@ import Modal from 'react-modal'
 import NavigationBar from '../../components/NavigationBar/NavigationBar'
 import usePeerStore from '../../store/peerStore'
 import logo from '../../assets/logo.png'
+import { Github } from '@icon-park/react'
 
 interface IProps { }
 
@@ -48,6 +49,15 @@ const Home: React.FunctionComponent<IProps> = () => {
           onClick={() => { onJoinSessionClick() }}>
           观看他人视频
         </button>
+
+        <div className='github'>
+          <button className='github-icon'>
+            <a href="https://github.com/xishuianfeng/You-video" target="_blank">
+              <Github theme="outline" size="48" fill="#333" />
+            </a>
+          </button>
+          <p>github 源码</p>
+        </div>
       </div>
 
       <Modal
