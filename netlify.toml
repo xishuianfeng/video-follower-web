@@ -1,0 +1,5 @@
+[[redirects]]
+# 把没有匹配到静态资源的路径，全部重定向到 index.html 文件。
+from = "/*"
+status = 200
+to = "/index.html"
