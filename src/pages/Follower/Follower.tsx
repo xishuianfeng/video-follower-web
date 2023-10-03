@@ -87,6 +87,11 @@ const Follower: React.FunctionComponent<IProps> = () => {
       })
   }, [])
 
+  useEffect(() => {
+    videoRef.current?.addEventListener('pause', () => {
+      videoRef.current?.play()
+    })
+  }, [])
 
   return (
     <div className='follower'>
@@ -101,8 +106,11 @@ const Follower: React.FunctionComponent<IProps> = () => {
           className='follower-video'
           ref={videoRef}
           autoPlay
+          playsInline
           onDoubleClick={() => {
             toggleFullscreen()
+            //@ts-expect-error  ios端的全屏方法
+            videoRef.current?.webkitEnterFullscreen()
           }}
         ></video>
 
@@ -112,6 +120,8 @@ const Follower: React.FunctionComponent<IProps> = () => {
             className='fullscreen-button'
             onClick={() => {
               toggleFullscreen()
+              //@ts-expect-error  ios端的全屏方法
+              videoRef.current?.webkitEnterFullscreen()
             }}
           >
             <FullScreenOne className='icon' theme="two-tone" size="48" fill={['#fff', '#fff']} />

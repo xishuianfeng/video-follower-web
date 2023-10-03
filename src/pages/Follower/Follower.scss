@@ -2,6 +2,7 @@
 
   .container {
     z-index: 1;
+    margin-left: -2vw;
     width: 99vw;
     height: 98vh;
     position: relative;
@@ -22,7 +23,7 @@
 
   .nav-wrapper {
     position: absolute;
-    width: 98vw;
+    width: 99vw;
     z-index: 2;
 
     &:hover {
@@ -36,7 +37,7 @@
     z-index: 1;
     top: 0;
     left: 0;
-    width: 99vw;
+    width: 100vw;
     height: 98vh;
   }
 
@@ -64,5 +65,14 @@
     background-color: rgba(0, 0, 0, 0.7);
     width: 100vw;
     height: 100vh;
+    overflow-wrap: break-word;
+
+    @media (max-width: 777px) {
+      font-size: 24px;
+    }
+
+    @media (max-width: 550px) {
+      font-size: 16px;
+    }
   }
 }
