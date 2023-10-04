@@ -24,6 +24,7 @@
   .nav-wrapper {
     position: absolute;
     width: 99vw;
+    margin-left: 1vw;
     z-index: 2;
 
     &:hover {
@@ -75,4 +76,12 @@
       font-size: 16px;
     }
   }
+
+
+}
+
+.play-button {
+  background-color: #eee;
+  height: 48px;
+  width: 40vw;
 }

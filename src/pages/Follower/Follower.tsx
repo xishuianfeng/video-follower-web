@@ -6,11 +6,12 @@ import NavigationBar from '../../components/NavigationBar/NavigationBar'
 import { useFullscreen, useMemoizedFn } from 'ahooks'
 import { createEmptyMediaStream } from '../../utils/peer'
 import { FullScreenOne } from '@icon-park/react'
+import Modal from 'react-modal'
 
 interface IProps { }
 
 const Follower: React.FunctionComponent<IProps> = () => {
-  const [params, setSearchParams] = useSearchParams()
+  const [params] = useSearchParams()
   const peerStore = usePeerStore()
   const serachParams = Object.fromEntries(params) as { remotePeerId: string }
   const remotePeerId = serachParams.remotePeerId
@@ -19,11 +20,15 @@ const Follower: React.FunctionComponent<IProps> = () => {
     HTMLVideoElement & { captureStream: HTMLCanvasElement['captureStream'] }
   >(null!)
   const peer = peerStore.getPeer()
+  const [peerOpen, setPeerOpen] = useState(false)
   const [subtitle, setSubtitle] = useState('')
   const [leaveString, setLeaveString] = useState('')
   const wrapperRef = useRef<HTMLDivElement>(null)
   const [isFullscreen, { toggleFullscreen }] = useFullscreen(wrapperRef.current, {})
+  // 判断是否为 ios 端
 
+  const isiOS = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)
+  // 接收JSON字符串做出相应对策，第一次进入页面自动连接
   const connectPeer = useMemoizedFn((remotePeerId: string) => {
     return new Promise<void>((resolve, reject) => {
       const call = peer.call(remotePeerId, createEmptyMediaStream())
@@ -31,7 +36,7 @@ const Follower: React.FunctionComponent<IProps> = () => {
       if (!remotePeerId) { return }
 
       call.once('stream', (stream) => {
-        console.log('remoteStream', stream);
+        // console.log('remoteStream', stream);
         videoRef.current.srcObject = stream
         resolve()
       })
@@ -55,6 +60,7 @@ const Follower: React.FunctionComponent<IProps> = () => {
       const result = JSON.parse(data)
       if (result.type === 'subtitle') {
         setSubtitle(result.subtitle)
+
       } else if (result.type === 'leavePlayer') {
         console.log('leave');
         setLeaveString('对方退出了播放页面，可能正在更换视频哦~')
@@ -62,31 +68,36 @@ const Follower: React.FunctionComponent<IProps> = () => {
       } else if (result.type === 'goPlayer') {
         setLeaveString('')
         connectPeer(remotePeerId)
-          .then(() => {
-            setSearchParams((prev) => {
-              prev.delete('remotePeerId')
-              return prev
-            })
-            console.log('连接成功');
-          })
-          .catch(() => { })
       }
     })
   }
 
   useEffect(() => {
     receptionJSON()
-
-    connectPeer(remotePeerId)
-      .then(() => {
-        setSearchParams((prev) => {
-          prev.delete('remotePeerId')
-          return prev
-        })
-        console.log('连接成功');
-      })
+    peer.on('open', onOpen)
+    connectPeer(remotePeerId).then(() => {
+      console.log('连接成功');
+    })
   }, [])
 
+  // 刷新页面重连
+  const [playModalVisible, setPlayModalVisible] = useState(false)
+  const onOpen = (id: string) => {
+    peerStore.setLocalPeerId(id)
+    setPeerOpen(true)
+    console.log('信令服务器连接建立成功', id)
+  }
+
+  useEffect(() => {
+    if (peerOpen) {
+      connectPeer(remotePeerId).then(() => {
+        console.log('连接成功');
+      })
+      setPlayModalVisible(true)
+    }
+  }, [peerOpen])
+
+  // 监听pause() 自动播放
   useEffect(() => {
     videoRef.current?.addEventListener('pause', () => {
       videoRef.current?.play()
@@ -95,7 +106,14 @@ const Follower: React.FunctionComponent<IProps> = () => {
 
   return (
     <div className='follower'>
-      <div className='container' ref={wrapperRef}>
+      <div className='container' ref={wrapperRef}
+        onDoubleClick={() => {
+          if (isiOS) {
+            //@ts-expect-error  ios端的全屏方法
+            videoRef.current?.webkitEnterFullscreen()
+          }
+        }}
+      >
         {isFullscreen
           ? ''
           : <div className='nav-wrapper'>
@@ -109,8 +127,6 @@ const Follower: React.FunctionComponent<IProps> = () => {
           playsInline
           onDoubleClick={() => {
             toggleFullscreen()
-            //@ts-expect-error  ios端的全屏方法
-            videoRef.current?.webkitEnterFullscreen()
           }}
         ></video>
 
@@ -120,8 +136,10 @@ const Follower: React.FunctionComponent<IProps> = () => {
             className='fullscreen-button'
             onClick={() => {
               toggleFullscreen()
-              //@ts-expect-error  ios端的全屏方法
-              videoRef.current?.webkitEnterFullscreen()
+              if (isiOS) {
+                //@ts-expect-error  ios端的全屏方法
+                videoRef.current?.webkitEnterFullscreen()
+              }
             }}
           >
             <FullScreenOne className='icon' theme="two-tone" size="48" fill={['#fff', '#fff']} />
@@ -140,6 +158,20 @@ const Follower: React.FunctionComponent<IProps> = () => {
           </div>
           : ''}
       </div>
+
+      <Modal
+        shouldCloseOnEsc={true}
+        isOpen={playModalVisible}
+      >
+        <button
+          className='play-button'
+          onClick={() => {
+            videoRef.current.play()
+            setPlayModalVisible(false)
+          }}>
+          点击播放
+        </button>
+      </Modal>
     </div>
   )
 }
