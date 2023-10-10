@@ -52,7 +52,7 @@ const Home: React.FunctionComponent<IProps> = () => {
 
         <div className='github'>
           <button className='github-icon'>
-            <a href="https://github.com/xishuianfeng/You-video/actions/runs/6391993402" target="_blank">
+            <a href="https://github.com/xishuianfeng/You-video/actions" target="_blank">
               <Github theme="outline" size="48" fill="#333" />
             </a>
           </button>
